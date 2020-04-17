@@ -40,13 +40,14 @@ If this file is present then you need to manually activate it with the following
 ```
 	$ sudo dtoverlay ssd1306 inverted
 ```
-At this point you should see that there is a new framebuffer device, /dev/fb1, by issuing the following terminal command.
+At this point you should see that there is a new framebuffer device, */dev/fb1*, by issuing the following terminal command.
 ```
 	$ ls -l /dev/fb*
 	crw-rw---- 1 root video 29, 0 Apr   8 15:21 /dev/fb0
 	crw-rw---- 1 root video 29, 1 Apr   8 15:21 /dev/fb1
 ```
-The first device listed, /dev/fb0, is the main video device for the system.  The second device listed, /dev/fb1,  is the new framebuffer device which provides access to the ssd1306 device.
+The first device listed, */dev/fb0*, is the main video device for the system.  
+The second device listed, */dev/fb1*, is the new framebuffer device which provides access to the ssd1306 device.
 
 ## Starting Adafruit OLED driver at boot
 To make the starting this whole process at boot-time, make the following edits.  
