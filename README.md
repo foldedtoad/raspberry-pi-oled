@@ -108,6 +108,11 @@ While you're accessing the OLED-based console, you can manually change the font 
 ```
 	$ setfont tom-thumb
 ```
+## Example 
+Below is an image of a Raspberry Pi Zero W with an Adafruit OLED Bonnet.  
+In this example, the "tom-thumb" font is used to edit a file with nano.  
+![Adafruit OLED Bonnet + Tom-Thumb font](https://github.com/foldedtoad/raspberry-pi-oled/blob/master/Adafruit_OLED_Bonnet.jpg)
+
 ## Miscellaneous Commands
 ```
 	$ sudo dpkg-reconfigure console-setup
