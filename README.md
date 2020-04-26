@@ -1,21 +1,23 @@
 # raspberry-pi-oled
-## Raspberry Pi + Adafruit OLED Bonnet Setup and Configuration
+## Raspberry Pi + Adafruit OLED Bonnet Setup and Configuration (and other similar Solomon devices)
 
 This procedure has been tested on a Raspberry Pi Zero W with the Adafruit 128x64 OLED Bonnet.  Since the Raspberry Pi Zero W is currently the lowest capable board in the Raspberry Pi series, this procedure should work for the whole series.  This OLED display communications with the Raspberry Pi via the I2C bus.  The OLED Bonnet's controller is the Solmon SSD1306 chipset.  
 
-**Note:** This procedure outlines the use of a SSD1306 128x64 device, but with a simple addition to the procedure a SSD1306 128x32 device can be configured: comments per this will be inline below.
+**Note:** This procedure outlines the use of a SSD1306 128x64 device, but with a simple addition to the procedure a SSD1306 128x32 device can be configured: alternate, 128x32-based configuration/comments will be inline below.
   
-The first is to determine if you Raspberry Pi (RaspPi hereafter) has the firmware support needed.  The firmware used was Raspbian at level 4.19.66, but support should be in earlier versions as well.  From a terminal shell, use the command 
+The first operation is to determine if you Raspberry Pi (RaspPi hereafter) has the firmware support needed.  The firmware used was description was Raspbian 4.19.66, but support should be in earlier versions as well.  
+
+From a terminal shell on the Raspberry Pi, use the command 
 ```
 	$ uname -a
 ```
-to determine the firmware level on your system.  
+This should respond with a line which indicates the Raspbian level for your system.
   
- From a terminal shell, determine that the OLED driver is present.
+From a terminal shell, determine that the OLED driver is present.
 ```
 	$ ls -l /lib/modules/$(uname -r)/kernel/drivers/video/fbdev/ssd1307fb.ko
 ```
-Note that while the driver is named “ssd1307fb.ko”, it supports the following Solomon devices:  **ssd1305, ssd1306, ssd1307, ssd1309**.  
+Note that while the driver is named “*ssd1307fb.ko*”, it supports the following Solomon devices:  **ssd1305, ssd1306, ssd1307, ssd1309**.  
   
 Next insure the I2C bus driver has been started, and runs at an appropiate baudrate.
 ```
@@ -25,7 +27,7 @@ Next insure the I2C bus driver has been started, and runs at an appropiate baudr
 Add or modify the following lines, then save the file.
 ```
 	dtparam=i2c_arm=on                   # note: may already be set on
-	dtparam=i2c_baudrate=1000000         # boost the baudrate
+	dtparam=i2c_baudrate=1000000         # boost the baudrate to max usable value
 ```
 Start the driver with the following terminal command.
 ```
@@ -61,38 +63,36 @@ The first device listed, */dev/fb0*, is the main video device for the system.
 The second device listed, */dev/fb1*, is the new framebuffer device which provides access to the ssd1306 device.
 
 ## Starting Adafruit OLED driver at boot
-To make the starting this whole process at boot-time, make the following edits.  
-Navigate to the /etc directory and open the modules file.
+To configure so this whole process is done at boot-time, make the following edits.  
+Navigate to the */etc* directory and open the *modules* file.
 ```
 	$ cd /etc
 	$ sudo nano modules
 ```
-Go to the bottom of the file, add the following line and save it.
+Go to the bottom of the file, add the following line and save the file.
 ```
 	ssd1307fb
 ```
-Navigate to the /boot directory and open the config.txt file.
+Navigate to the */boot* directory and open the *config.txt* file.
 ```
 	$ cd /boot
 	$ sudo nano config.txt
 ```
-Go to the bottom of file, add the following lines and save it.
+Go to the bottom of file, add the following lines and save the file.
 ```
-	dtoverlay=ssd1306,inverted
+	dtoverlay=ssd1306,inverted              # for 128x64 device
 ```
 or 
 ```
 	dtoverlay=ssd1306,inverted,height=32    # for 128x32 device
 ```
-Finally add the following
-```
-	dtparam=i2c_arm=on
-	dtparam=i2c_baudrate=1000000   # boost baudrate to RaspPi max.
-```
 
 ## Optional
-To provide console output, navigate to /boot/cmdline.txt, add the following text to the line and save it.
-fbcon=map:01
+To enable console output to the SSD1306, navigate to */boot/cmdline.txt*, add the following text to the end of the line and save the file.
+```
+	fbcon=map:01
+```
+Note that the "01" parameter is rather enigmatic: in this usage the odd-numbered tty's are opened per normal, but even-numbered tty's display on the SSD1306 device.  The exception is */dev/tty7* which get you back to the window/GUI shell.
 
 Finally
 Reboot the system.
@@ -100,15 +100,21 @@ Reboot the system.
 ## Changing the Console Font Size
 The default console font size is too large to be of any practical use.  The next procedure will add a new, smaller font, which allows more characters per line to be displayed.  
  
-Copy the “tom-thumb” font file, *tom-thumb.psf.gz*, into /usr/share/consolefonts/.
+Copy the “tom-thumb” font file, *tom-thumb.psf.gz*, into */usr/share/consolefonts/*.
 ```
 	$ sudo cp ~/tom-thumb.psf.gz /usr/share/consolefonts/
 ```
+
+## Activating the SSD1306-based console
 To switch to the OLED-based console do the following.
 ```
 	$ [ctrl]+[alt]+[F2]
 ```
-If all works as expected then you should see a blinking cursor on the OLED screen.  If you press [enter], you should get a login prompt.  Use whatever login user and password you've set.  The default for Raspberry-Pi's is and password=raspberry.  Hopefully you've changed the password to some other that “raspberry”.  
+This will start */dev/tty2* as a terminal/console.  
+
+If all works as expected then you should see a blinking cursor on the OLED screen.  
+
+If you press [enter], you should get a login prompt.  Use whatever login user and password you've set.  The default for Raspberry-Pi's is and password=raspberry.  Hopefully you've changed the password to some other that the default “raspberry”.  
 
 To switch back to the GUI-based console, do the following.
 ```
@@ -120,7 +126,9 @@ Since the default tty login typically spews out quite a bit of text, it is nice 
 ```
 	$ touch ~/.hushlogin
 ```
-This will considerably shorten the time until a useful command line prompt appears.
+This will considerably shorten the time until a useful command line prompt appears.  
+
+## Using alternative fonts
 While you're accessing the OLED-based console, you can manually change the font to the “tom-thumb” font with the following command.
 ```
 	$ setfont tom-thumb
