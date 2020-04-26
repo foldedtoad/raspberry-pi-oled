@@ -2,8 +2,14 @@
 ## Raspberry Pi + Adafruit OLED Bonnet Setup and Configuration
 
 This procedure has been tested on a Raspberry Pi Zero W with the Adafruit 128x64 OLED Bonnet.  Since the Raspberry Pi Zero W is currently the lowest capable board in the Raspberry Pi series, this procedure should work for the whole series.  This OLED display communications with the Raspberry Pi via the I2C bus.  The OLED Bonnet's controller is the Solmon SSD1306 chipset.  
+
+**Note:** This procedure outlines the use of a SSD1306 128x64 device, but with a simple addition to the procedure a SSD1306 128x32 device can be configured: comments per this will be inline below.
   
-The first is to determine if you Raspberry Pi (RaspPi hereafter) has the firmware support needed.  The firmware used was Raspbian at level 4.19.66, but support should be in earlier version as well.  From a terminal shell, use the command “uname -a” to determine the firmware level on your system.  
+The first is to determine if you Raspberry Pi (RaspPi hereafter) has the firmware support needed.  The firmware used was Raspbian at level 4.19.66, but support should be in earlier versions as well.  From a terminal shell, use the command 
+```
+	$ uname -a
+```
+to determine the firmware level on your system.  
   
  From a terminal shell, determine that the OLED driver is present.
 ```
