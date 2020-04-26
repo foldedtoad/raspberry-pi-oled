@@ -31,6 +31,11 @@ Start the driver with the following terminal command.
 ```
 	$ sudo modprobe ssd1307fb,inverted
 ```
+or
+```
+	$ sudo modprobe ssd1307fb,inverted,height=32
+```
+
 To insure the drive has started successfully, issue the following terminal command.
 ```
 	$ lsmod | grep ssd1307fb
@@ -74,9 +79,15 @@ Navigate to the /boot directory and open the config.txt file.
 Go to the bottom of file, add the following lines and save it.
 ```
 	dtoverlay=ssd1306,inverted
-	#
+```
+or 
+```
+	dtoverlay=ssd1306,inverted,height=32    # for 128x32 device
+```
+Finally add the following
+```
 	dtparam=i2c_arm=on
-	dtparam=i2c_baudrate=1000000
+	dtparam=i2c_baudrate=1000000   # boost baudrate to RaspPi max.
 ```
 
 ## Optional
