@@ -44,7 +44,8 @@ To insure the drive has started successfully, issue the following terminal comma
 ```
 You should see four lines of output, with the top line being the driver instance.  
 
-Next determine if the devicetree support is present, and if so, activate the overlay defining the hardware parameters needed to integrate the OLED controller into the system configuration.  From terminal shell, determine that the needed overlay file is present.
+Next determine if the devicetree support is present, and if so, activate the overlay defining the hardware parameters needed to integrate the OLED controller into the system configuration.  
+From terminal shell, determine that the needed overlay file is present.
 ```
  	$ ls -l /boot/overlays/ssd1306.dtbo
 ```
@@ -62,7 +63,7 @@ At this point you should see that there is a new framebuffer device, */dev/fb1*,
 The first device listed, */dev/fb0*, is the main video device for the system.  
 The second device listed, */dev/fb1*, is the new framebuffer device which provides access to the ssd1306 device.
 
-## Starting Adafruit OLED driver at boot
+## Configure the system to start the driver and configure it at boot time
 To configure so this whole process is done at boot-time, make the following edits.  
 Navigate to the */etc* directory and open the *modules* file.
 ```
@@ -87,40 +88,34 @@ or
 	dtoverlay=ssd1306,inverted,height=32    # for 128x32 device
 ```
 
-## Optional
-To enable console output to the SSD1306, navigate to */boot/cmdline.txt*, add the following text to the end of the line and save the file.
+To enable terminal output to the SSD1306, navigate to */boot/cmdline.txt*, add the following text to the end of the line and save the file.
 ```
 	fbcon=map:01
 ```
-Note that the "01" parameter is rather enigmatic: in this usage the odd-numbered tty's are opened per normal, but even-numbered tty's display on the SSD1306 device.  The exception is */dev/tty7* which get you back to the window/GUI shell.
+Note that the "01" parameter is rather enigmatic: in this usage the odd-numbered tty's are opened per normal, but even-numbered tty's display on the SSD1306 device. So */dev/tty[2,4,6,8...]* will use the SSD1306.  
+The exception is */dev/tty7*, which is the main window GUI shell.
 
-Finally
-Reboot the system.
+## Reboot the system.
+Finally, reboot to allow the changes to take effect.
 
-## Changing the Console Font Size
-The default console font size is too large to be of any practical use.  The next procedure will add a new, smaller font, which allows more characters per line to be displayed.  
- 
-Copy the “tom-thumb” font file, *tom-thumb.psf.gz*, into */usr/share/consolefonts/*.
-```
-	$ sudo cp ~/tom-thumb.psf.gz /usr/share/consolefonts/
-```
 
-## Activating the SSD1306-based console
-To switch to the OLED-based console do the following.
+## Activating a SSD1306-based terminal
+To switch to the OLED-based terminal do the following.
 ```
 	$ [ctrl]+[alt]+[F2]
 ```
-This will start */dev/tty2* as a terminal/console.  
+This will start */dev/tty2* as a terminal.  
 
-If all works as expected then you should see a blinking cursor on the OLED screen.  
+If all works as expected then you should see a blinking cursor on the SSD1306 screen.  
 
-If you press [enter], you should get a login prompt.  Use whatever login user and password you've set.  The default for Raspberry-Pi's is and password=raspberry.  Hopefully you've changed the password to some other that the default “raspberry”.  
+By pressing [enter], you should get a login prompt.  Use whatever login user and password you've set.  
+While the default password for Raspberry-Pi's is "raspberry", it's recommended you changed the password to some other that this default.  
 
-To switch back to the GUI-based console, do the following.
+To switch back to the GUI-based window, do the following.
 ```
 	$ [ctrl]+[alt]+[F7]
 ```
-Note that the GUI-based console will appear to be non-responsive while you have switch to the OLED-based console.  
+Note that the GUI-based window will appear to be non-responsive while you are switched to the SSD1306-based terminal.  
 
 Since the default tty login typically spews out quite a bit of text, it is nice to not have this text displayed.  This is accomplished with the following option.
 ```
@@ -129,17 +124,20 @@ Since the default tty login typically spews out quite a bit of text, it is nice 
 This will considerably shorten the time until a useful command line prompt appears.  
 
 ## Using alternative fonts
-While you're accessing the OLED-based console, you can manually change the font to the “tom-thumb” font with the following command.
+The default terminal font size is too large to be of any practical use in conjunction with the SSD1306.  
+The next procedure will add a new, smaller font, which allows more characters per line to be displayed.  
+ 
+Copy the “tom-thumb” font file, *tom-thumb.psf.gz*, into */usr/share/consolefonts/*.
+```
+	$ sudo cp ~/tom-thumb.psf.gz /usr/share/consolefonts/
+```
+
+While you're accessing the SSD1306-based terminal, you can manually change the font to the “tom-thumb” font with the following command.
 ```
 	$ setfont tom-thumb
 ```
 ## Example 
 Below is an image of a Raspberry Pi Zero W with an Adafruit OLED Bonnet.  
-In this example, the "tom-thumb" font is used to edit a file with nano.  
+In this example, the "tom-thumb" font is used to edit a file with the nano editor.  
 ![Adafruit OLED Bonnet + Tom-Thumb font](https://github.com/foldedtoad/raspberry-pi-oled/blob/master/Adafruit_OLED_Bonnet.jpg)
 
-## Miscellaneous Commands
-```
-	$ sudo dpkg-reconfigure console-setup
-	$ sudo nano /etc/default/console-setup
-```
