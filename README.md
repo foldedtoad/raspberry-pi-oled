@@ -93,7 +93,7 @@ To enable terminal output to the SSD1306, navigate to */boot/cmdline.txt*, add t
 	fbcon=map:01
 ```
 Note that the "01" parameter is rather enigmatic: in this usage the odd-numbered tty's are opened per normal, but even-numbered tty's display on the SSD1306 device. So */dev/tty[2,4,6,8...]* will use the SSD1306.  
-The exception is */dev/tty7*, which is the main window GUI shell.
+The special case is */dev/tty7*, which is the main window GUI shell.
 
 ## Reboot the system.
 Finally, reboot to allow the changes to take effect.
